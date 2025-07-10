@@ -1,0 +1,265 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/payapp.css' %}">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tabs = document.querySelectorAll('.tab');
+
+    tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            var tabId = this.getAttribute('data-tab');
+
+            document.querySelectorAll('.tab-content').forEach(function(content) {
+                content.classList.remove('active');
+            });
+
+            var target = document.getElementById(tabId);
+            if (target) {
+                target.classList.add('active');
+            }
+
+            tabs.forEach(function(t) {
+                t.classList.remove('active');
+            });
+            this.classList.add('active');
+        });
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var markAllReadBtn = document.getElementById('mark-all-read-btn');
+
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', function() {
+            fetch("/mark_all_as_read/")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.querySelectorAll('.badge').forEach(badge => {
+                            badge.style.display = 'none';
+                        });
+                    } else {
+                        console.error('Error marking notifications as read:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    }
+});
+</script>
+
+</head>
+<body>
+    <a href="/" class="btn-sm-home">Home</a>
+    <a href="https://127.0.0.1:8000/payapp/conversion/USD/GBP/100/" class="btn-sm-reload">REST</a>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-sm-logout">Logout</button>
+    </form>
+    </div>
+    <div class="container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }}">
+                        {{ message|escape }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <h1>Welcome to Your Dashboard, {{ user.first_name|escape }}</h1>
+        <p>Total Balance: {{ currency_symbol|escape }}{{ balance|escape }} ({{ currency|escape }})</p>
+
+        {% if not user.is_superuser %}
+            <div class="section">
+                <h2 class="section-title">Make Direct Payment</h2>
+                <form method="post" action="{% url 'direct_payment' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="recipient_email">Recipient Email:</label>
+                        <input type="email" id="recipient_email" name="recipient_email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="number" id="amount" name="amount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="currency">Send Currency:</label>
+                        <select id="currency" name="currency" required>
+                            <option value="GBP">GBP</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Send Payment</button>
+                </form>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Create Payment Request</h2>
+                <form method="post" action="{% url 'create_payment_request' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="requestee_email">Requestee Email:</label>
+                        <input type="email" id="requestee_email" name="requestee_email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="number" id="amount" name="amount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="currency">Request Currency:</label>
+                        <select id="currency" name="currency" required>
+                            <option value="GBP">GBP</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Request Payment</button>
+                </form>
+            </div>
+        {% endif %}
+
+        <div class="mark-read-container">
+            <button id="mark-all-read-btn" class="btn secondary">Mark All as Read</button>
+        </div>
+        <div class="tabs">
+            {% if not user.is_superuser %}
+                <div class="tab active" data-tab="pending-requests" data-content="pending_requests">
+                    Pending Requests <span class="badge" {% if pending_requests_unread_count > 0 %}style="display: inline;"{% else %}style="display: none;"{% endif %}>{{ pending_requests_unread_count }}</span>
+                </div>
+                <div class="tab" data-tab="requested-payments" data-content="requested_payments">
+                    Requested Payments <span class="badge" {% if requested_payments_count > 0 %}style="display: inline;"{% else %}style="display: none;"{% endif %}>{{ requested_payments_count }}</span>
+                </div>
+                <div class="tab" data-tab="sent-direct-payments" data-content="sent_direct_payments">
+                    Sent Direct Payments <span class="badge" {% if sent_direct_payments_count > 0 %}style="display: inline;"{% else %}style="display: none;"{% endif %}>{{ sent_direct_payments_count }}</span>
+                </div>
+                <div class="tab" data-tab="received-direct-payments" data-content="received_direct_payments">
+                    Received Direct Payments <span class="badge" {% if received_direct_payments_unread_count > 0 %}style="display: inline;"{% else %}style="display: none;"{% endif %}>{{ received_direct_payments_unread_count }}</span>
+                </div>
+                <div class="tab" data-tab="sent-request-payments" data-content="sent_request_payments">
+                    Sent Payments from Requests <span class="badge" {% if sent_request_payments_count > 0 %}style="display: inline;"{% else %}style="display: none;"{% endif %}>{{ sent_request_payments_count }}</span>
+                </div>
+                <div class="tab" data-tab="received-request-payments" data-content="received_request_payments">
+                    Received Payments from Requests <span class="badge" {% if received_request_payments_unread_count > 0 %}style="display: inline;"{% else %}style="display: none;"{% endif %}>{{ received_request_payments_unread_count }}</span>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if not user.is_superuser %}
+            <div id="sent-direct-payments" class="tab-content active">
+                <h2>Sent Direct Payments</h2>
+                <ul>
+                    {% for payment in sent_direct_payments %}
+                        <li>
+                            To: {{ payment.recipient.email|escape }},
+                            Amount: {{ payment.original_amount|escape }} {{ payment.original_currency|escape }},
+                            Date: {{ payment.timestamp|date:"Y-m-d" }},
+                            Time: {{ payment.timestamp|date:"h:i A" }}
+                        </li>
+                    {% empty %}
+                        <li>No sent direct payments yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div id="received-direct-payments" class="tab-content">
+                <h2>Received Direct Payments</h2>
+                <ul>
+                    {% for payment in received_direct_payments %}
+                        <li>
+                            From: {{ payment.sender.email|escape }},
+                            Amount: {{ payment.amount|escape }} {{ payment.currency|escape }},
+                            Date: {{ payment.timestamp|date:"Y-m-d" }},
+                            Time: {{ payment.timestamp|date:"h:i A" }}
+                        </li>
+                    {% empty %}
+                        <li>No received direct payments yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div id="sent-request-payments" class="tab-content">
+                <h2>Sent Payments from Requests</h2>
+                <ul>
+                    {% for payment in sent_request_payments %}
+                        <li>
+                            To: {{ payment.recipient.email|escape }},
+                            Amount: {{ payment.amount|escape }} {{ payment.original_currency|escape }},
+                            Date: {{ payment.timestamp|date:"Y-m-d" }},
+                            Time: {{ payment.timestamp|date:"h:i A" }}
+                        </li>
+                    {% empty %}
+                        <li>No sent payments from requests yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div id="received-request-payments" class="tab-content">
+                <h2>Received Payments from Requests</h2>
+                <ul>
+                    {% for payment in received_request_payments %}
+                        <li>
+                            From: {{ payment.sender.email|escape }},
+                            Amount: {{ payment.amount|escape }} {{ payment.currency|escape }},
+                            Date: {{ payment.timestamp|date:"Y-m-d" }},
+                            Time: {{ payment.timestamp|date:"h:i A" }}
+                        </li>
+                    {% empty %}
+                        <li>No received payments from requests yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div id="pending-requests" class="tab-content">
+                <h2>Pending Requests</h2>
+                <ul>
+                    {% for request in pending_requests %}
+                        <li>
+                            From: {{ request.requester.email|escape }},
+                            Amount: {{ request.amount|escape }} {{ request.currency|escape }},
+                            Date: {{ request.timestamp|date:"Y-m-d" }},
+                            Time: {{ request.timestamp|date:"h:i A" }}
+                        </li>
+                        <form method="post" action="{% url 'accept_payment_request' request.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn primary">Accept</button>
+                        </form>
+                        <form method="post" action="{% url 'reject_payment_request' request.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn tertiary">Reject</button>
+                        </form>
+                    {% empty %}
+                        <li>No pending requests.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div id="requested-payments" class="tab-content">
+                <h2>Requested Payments</h2>
+                <ul>
+                    {% for request in requested_payments %}
+                        <li>
+                            To: {{ request.requestee.email|escape }},
+                            Amount: {{ request.currency|escape }} {{ request.amount|escape }},
+                            Date: {{ request.timestamp|date:"Y-m-d" }},
+                            Time: {{ request.timestamp|date:"h:i A" }},
+                            Status: {{ request.status|escape }}
+                        </li>
+                    {% empty %}
+                        <li>No requested payments yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

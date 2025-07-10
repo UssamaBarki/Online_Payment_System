@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/payapp.css' %}">
+</head>
+<body>
+    {% if user.is_superuser %}
+        <a href="/" class="btn-sm-home">Home</a>
+        <a href="{% url 'admin_logout' %}" class="btn-sm-logout">Logout</a>
+        <a href="{% url 'admin:index' %}" class="btn-sm-admin-login">Django Admin</a>
+
+        <div class="container">
+            <h1>Admin Dashboard</h1>
+
+            <div class="section">
+                <h2 class="section-title">User Accounts and Payments</h2>
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Balance</th>
+                                <th>Sent Payments</th>
+                                <th>Received Payments</th>
+                            </tr>
+                            {% for user in users_data %}
+                            <tr>
+                                <td>{{ user.username|escape }}</td>
+                                <td>{{ user.email|escape }}</td>
+                                <td>£{{ user.balance|escape }}</td>
+                                <td>
+                                    <ul>
+                                        {% for payment in user.sent_payments %}
+                                        <li>To: {{ payment.recipient.email|escape }}, £{{ payment.amount|escape }}, {{ payment.timestamp|date:"Y-m-d" }}, {{ payment.timestamp|date:"h:i A" }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul>
+                                        {% for payment in user.received_payments %}
+                                        <li>From: {{ payment.sender.email|escape }}, £{{ payment.amount|escape }}, {{ payment.timestamp|date:"Y-m-d" }}, {{ payment.timestamp|date:"h:i A" }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Payment Requests</h2>
+                <div class="card">
+                    <ul>
+                        {% for request in all_requests %}
+                        <li>From: {{ request.requester.email|escape }} to {{ request.requestee.email|escape }}, £{{ request.amount|escape }}, Status: {{ request.status|escape }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Admin Actions</h2>
+                <div class="card">
+                    <a href="{% url 'register' %}" class="btn primary">Register User</a>
+                    <a href="{% url 'register_superuser' %}" class="btn secondary">Register Superuser</a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p>You do not have permission to access this page.</p>
+    {% endif %}
+</body>
+</html>

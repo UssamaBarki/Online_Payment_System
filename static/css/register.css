@@ -1,0 +1,169 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #edefec;
+	color: #454745;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+h1 {
+    color: #163300;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.container {
+    width: 300px;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 27px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.btn {
+    width: 100%;
+	display: inline-block;
+    padding: 12px 20px;
+    font-size: 16px;
+	font-weight: bold;
+    color: #163300;
+    background-color: #9fe870;
+    text-decoration: none;
+	border: 1px solid #9fe870;
+    border-radius: 9999px;
+    cursor: pointer;	
+    transition: background-color 0.3s ease;
+}
+.btn:hover {
+    background-color: #80e142;
+	border: 1px solid #80e142;
+}
+.btn-sm-home, .btn-sm-user-login {
+    position: absolute;
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: #163300;
+    background-color: #9fe870;
+    text-decoration: none;
+    margin: 10px;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-sm-logout, .btn-sm-admin-login {
+    position: absolute;
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #cc0000;
+    text-decoration: none;
+    margin: 10px;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-sm-home {
+    top: 10px;
+    left: 10px;
+}
+.btn-sm-user-login, .btn-sm-admin-login {
+    top: 10px;
+    right: 10px;
+}
+.btn-sm-logout {
+    top: 10px;
+    right: 10px;
+}
+.btn-sm-home:hover, .btn-sm-user-login:hover {
+    background-color: #80e142;
+}
+.btn-sm-logout:hover, .btn-sm-admin-login:hover {
+    background-color: #b50000;
+}
+
+.btn-admin {
+	width: 100%;
+    display: inline-block;
+    padding: 12px 20px;
+    font-size: 16px;
+	font-weight: bold;
+    color: #fff;
+    background-color: #cc0000;
+    text-decoration: none;
+	border: 1px solid #cc0000;
+    border-radius: 9999px;
+    cursor: pointer;	
+    transition: background-color 0.3s ease;
+}
+.btn-admin:hover {
+    background-color: #b50000;
+	border: 1px solid #b50000;
+}
+
+.error-message {
+    color: #FF0000;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.messages {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.alert.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.alert.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.register-link, .login-link {
+    text-align: center;
+    display: block;
+    margin-top: 15px;
+}
+.register-link a, .login-link a {
+    color: #163300;
+    text-decoration: none;
+}
+.register-link a:hover, .login-link a:hover {
+    text-decoration: underline;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+.form-group input {
+    width: calc(100% - 32px);
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+.form-group select {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}

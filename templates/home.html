@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Service</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+
+</head>
+<body>
+    <div class="container">
+        <div class="logo">OPS</div>
+        <h1>Welcome to Online Payment Service</h1>
+        <p class="tagline">Your reliable partner for seamless transactions.</p>
+		<a href="{% url 'register' %}" class="btn">Register</a>
+   		<a href="{% url 'login' %}" class="btn">Login</a>
+    </div>
+</body>
+</html>
